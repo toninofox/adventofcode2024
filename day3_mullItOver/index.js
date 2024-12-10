@@ -9,8 +9,9 @@ const sol1 = (input)=> {
 }
 
 const sol2 = (input)=> {
-    const i = parseInput(input)
-    return i.reduce((acc,r) =>  isSafe(r.map(s=>_.toInteger(s)),1) ? acc + 1 : acc,0)
+    const cleaned = input.replace(/(don't\(\).+?do\(\))/gs,"")
+    const formulas = findFormula(cleaned)
+    return formulas.reduce((acc,v)=> acc + (v.first * v.second),0)
 }
 
-console.log(sol1(inputs.i2))
+console.log(sol2(inputs.i2))
