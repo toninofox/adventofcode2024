@@ -26,16 +26,44 @@ const validSequence = (update, rules) => {
 const sol1 = (input) => {
    const data = parseInput(input)
    const middleValidPageNumbers = []
-   for (let i = 0; i < data.updates.length; i++) {    
-    if(validSequence(data.updates[i], data.rules)){
-      middleValidPageNumbers.push(getMiddleElement(data.updates[i]))
-    }
+   for (let i = 0; i < data.updates.length; i++) { 
+      const sequence = data.updates[i]   
+      const filteredRules = data.rules.filter(rule=>rule.some(r=>sequence.includes(r)))
+      if(validSequence(sequence, filteredRules)){
+         middleValidPageNumbers.push(getMiddleElement(sequence))
+      }
    }
    return middleValidPageNumbers.reduce((partialSum, a) => _.toInteger(a) + partialSum, 0);
 }
 
-const sol2 = (input) => {
-}
+const rulesAsMap = rules => rules.reduce((acc,r)=> {
+   acc[r[0]] = r[1]
+    return acc
+   },{})
 
-console.log(sol1(inputs.i2))
+const sortPages = (sequence, rulesMap) => 
+  sequence.sort((a,b) => {
+   if(rulesMap[b] === a){
+      -1
+   } else if(rulesMap[a] === b){
+      return 1
+   } else {
+      return 0
+   }
+})
+
+const sol2 = (input) => {
+   const data = parseInput(input)
+   const middleValidPageNumbers = []
+   for (let i = 0; i < data.updates.length; i++) {    
+      const sequence = data.updates[i]  
+      const filteredRules = data.rules.filter(rule=>rule.some(r=>sequence.includes(r)))
+      if(!validSequence(sequence,filteredRules)){
+         sortPages(sequence,rulesAsMap(filteredRules))
+         middleValidPageNumbers.push(getMiddleElement(sequence))
+      }
+   }
+   return middleValidPageNumbers.reduce((partialSum, a) => _.toInteger(a) + partialSum, 0);
+}
+console.log(sol2(inputs.i2))
 
